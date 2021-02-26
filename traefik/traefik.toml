@@ -1,0 +1,67 @@
+################################################################
+# Global configuration
+################################################################
+[global]
+  checkNewVersion = true
+  sendAnonymousUsage = false
+
+################################################################
+# Entrypoints configuration
+################################################################
+
+# Entrypoints definition
+#
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+
+  [entryPoints.websecure]
+    address = ":443"
+
+################################################################
+# Traefik logs configuration
+################################################################
+
+# Traefik logs
+# Enabled by default and log to stdout
+#
+# Optional
+#
+[log]
+
+  # Optional
+  # Default: "ERROR"
+  # level = "DEBUG"
+
+################################################################
+# API and dashboard configuration
+################################################################
+
+# Enable API and dashboard
+[api]
+
+  # Enable the API in insecure mode
+  #
+  # Optional
+  # Default: false
+  #
+  insecure = true
+
+################################################################
+# Providers configuration
+################################################################
+[providers.file]
+  directory = "/etc/traefik/configuration"
+  watch = true
+
+################################################################
+# Docker configuration backend
+################################################################
+
+# Enable Docker configuration backend
+[providers.docker]
+
+  defaultRule = "Host(`{{ normalize .Name }}.test`)"
+  exposedByDefault = false
+  network = "gateway"
+
