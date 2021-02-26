@@ -12,12 +12,14 @@ services:
       - "80:80"
       # The HTTPS port
       - "443:443"
-      # The dashboard
-      - "8080:8080"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik/:/etc/traefik/:ro 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.test`)"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
     networks:
       # Attach the gateway network
       - default

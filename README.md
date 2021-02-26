@@ -55,3 +55,8 @@ labels:
 
 You can customize lots of things using labels, see
 [https://doc.traefik.io/traefik/providers/docker/](https://doc.traefik.io/traefik/providers/docker/) for more details.
+
+## Accessing the Traefik dashboard
+
+Once traefik is running you can access the dashboard a [traefik.test](http://traefik.test)
+
