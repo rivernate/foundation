@@ -24,30 +24,33 @@ docker-compose applications.
 
 #### Create the docker network
 
-```docker network create --driver bridge --attachable --internal=false gateway --gateway=172.26.0.1 --subnet=172.26.0.0/16```
+```
+docker network create --driver bridge --attachable --internal=false gateway --gateway=172.26.0.1 --subnet=172.26.0.0/16
+```
 
-#### Setup DNS resolution for the `test` tld
+#### Setup DNS resolution for the "test" tld
 
 The IP Address needs to be the same as the docker bridge network gateway, by default this is `172.17.0.1`. You can look
 it up with this command though `docker network inspect bridge | jq '.[0].IPAM.Config[0].Gateway'`
 
 This is specific for NetworkManager and dnsmasq on Arch Linux. You may need to adapt it for other distros.
 
-```echo address=/test/172.17.0.1 > /etc/NetworkManager/dnsmasq.d/test```
+`echo address=/test/172.17.0.1 > /etc/NetworkManager/dnsmasq.d/test`
 
 #### Start traefik
 
-```docker-compose up -d```
+`docker-compose up -d`
 
 The `-d` runs it in detached mode
 
 The traefik container is configured with `restart: always`. This will cause it to start automatically at startup. If you
-want to stop it from running, just run: ```docker-compose stop``` in this directory
+want to stop it from running, just run: `docker-compose stop` in this directory
 
 #### Enable traefik for a container
 
 By default traefik doesn't expose containers, to expose a container you just need to
 add a label to it's docker-compose configuration.
+
 ```
 labels:
   - "traefik.enable=true"
@@ -55,6 +58,42 @@ labels:
 
 You can customize lots of things using labels, see
 [https://doc.traefik.io/traefik/providers/docker/](https://doc.traefik.io/traefik/providers/docker/) for more details.
+
+## Docker Networking
+
+Everything in this repositories docker-compose file operates on the `gateway` network
+you created. The idea of this network is to enable a shared network for your different
+docker-compose applications. You can put shared services on the gatewy network by adding it in the docker-compose file for you applications. At the bottom of your docker-compose file add:
+
+```
+networks:
+  default:
+    internal: true
+  
+  gateway:
+    external:
+      name: gateway
+```
+
+And then for your specific service definition that needs access to the gateway network add:
+
+```
+networks:
+  - default
+  - gateway
+```
+
+You can also specify aliases for your services to be accessed via by specifying them
+in the services network definition as follows:
+
+```
+networks:
+  default:
+  gateway:
+    aliases:
+      - my_custom_name
+```
+
 
 ## Accessing the Traefik dashboard
 
