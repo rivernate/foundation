@@ -60,3 +60,25 @@ You can customize lots of things using labels, see
 
 Once traefik is running you can access the dashboard a [traefik.test](http://traefik.test)
 
+## OpenTelemetry Collector
+
+There is an OpenTelemetry Collector configured with the following:
+
+### Receivers
+
+ * otlp - http on port 55681, grpc on port 4317
+
+### Processors
+
+ * batch
+
+### Exporters
+
+ * jaeger - writing the to included jaeger server
+ * logging
+
+## Jaeger
+
+There is a Jaeger server accessible at http://jaeger.test
+
+The OpenTelemetry Collector exports to it, and currently Traefik exports to it directly, though it should go through the OpenTelemetery Collector as well.
