@@ -65,3 +65,15 @@
   exposedByDefault = false
   network = "gateway"
 
+################################################################
+# Jaeger configuration
+################################################################
+
+# Tracing definition
+[tracing]
+  [tracing.jaeger]
+    samplingServerURL = "http://jaeger:5778/sampling"
+    samplingType = "const"
+    samplingParam = 1.0
+    localAgentHostPort = "jaeger:6831"
+    traceContextHeaderName = "uber-trace-id"
