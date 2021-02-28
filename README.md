@@ -22,15 +22,9 @@ docker-compose applications.
 
 ## Getting Started
 
-#### Create the docker network
-
-```
-docker network create --driver bridge --attachable --internal=false gateway --gateway=172.26.0.1 --subnet=172.26.0.0/16
-```
-
 #### Setup DNS resolution for the "test" tld
 
-The IP Address needs to be the same as the docker bridge network gateway, by default this is `172.17.0.1`. You can look
+The IP Address needs to be the same as the docker bridge network gateway,  by default this is `172.17.0.1`. You can look
 it up with this command though `docker network inspect bridge | jq '.[0].IPAM.Config[0].Gateway'`
 
 This is specific for NetworkManager and dnsmasq on Arch Linux. You may need to adapt it for other distros.
@@ -61,26 +55,28 @@ You can customize lots of things using labels, see
 
 ## Docker Networking
 
-Everything in this repositories docker-compose file operates on the `gateway` network
-you created. The idea of this network is to enable a shared network for your different
-docker-compose applications. You can put shared services on the gatewy network by adding it in the docker-compose file for you applications. At the bottom of your docker-compose file add:
+Everything in this repositories docker-compose file operates on the `shared` network.
+The `shared` network is created automatically when you run `docker-compose up` and is exposed so that other applications can utilize it as well.
+The idea of this network is to enable a shared network for your different
+docker-compose applications. You can put shared services on the `shared` network by adding
+it in the docker-compose file for you applications. At the bottom of your docker-compose file add:
 
 ```
 networks:
   default:
     internal: true
   
-  gateway:
+  shared:
     external:
-      name: gateway
+      name: shared
 ```
 
-And then for your specific service definition that needs access to the gateway network add:
+And then for your specific service definition that needs access to the `shared`  network add:
 
 ```
 networks:
   - default
-  - gateway
+  - shared
 ```
 
 You can also specify aliases for your services to be accessed via by specifying them
@@ -89,7 +85,7 @@ in the services network definition as follows:
 ```
 networks:
   default:
-  gateway:
+  shared:
     aliases:
       - my_custom_name
 ```

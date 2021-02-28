@@ -23,8 +23,8 @@ services:
       - "traefik.http.routers.traefik.rule=Host(`traefik.test`)"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
     networks:
-      # Attach the gateway network
       - default
+      - shared
 
   jaeger:
     image: jaegertracing/all-in-one:1.21
@@ -50,10 +50,15 @@ services:
       - ./otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     networks:
       default:
+      shared:
         aliases:
           - otelcol
 
 networks:
-  default:
-    external:
-      name: gateway
+  shared:
+    name: shared
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.26.0.0/16
