@@ -1,0 +1,29 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:55681
+      grpc:
+        endpoint: 0.0.0.0:4317	
+
+processors:
+  batch:
+
+exporters:
+  jaeger:
+    insecure: true
+    endpoint: jaeger:14250
+  
+  logging:
+
+extensions:
+  health_check:
+    port: 13133
+
+service:
+  extensions: [health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, jaeger]

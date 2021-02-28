@@ -3,6 +3,8 @@ version: '3'
 services:
   traefik:
     image: traefik:v2.3
+    depends_on:
+      - jaeger
     command: --configfile /etc/traefik/traefik.toml
     restart: "always"
     extra_hosts:
@@ -28,6 +30,7 @@ services:
     image: jaegertracing/all-in-one:1.21
     environment:
       COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+    restart: "always"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jaeger.rule=Host(`jaeger.test`)"
@@ -36,6 +39,19 @@ services:
       - "traefik.http.routers.jaeger.entrypoints=web"
     networks:
       - default
+
+  opentelemetry-collector:
+    image: otel/opentelemetry-collector:0.21.0
+    depends_on:
+      - jaeger
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    restart: "always"
+    volumes:
+      - ./otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    networks:
+      default:
+        aliases:
+          - otelcol
 
 networks:
   default:
