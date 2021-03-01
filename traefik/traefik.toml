@@ -9,8 +9,6 @@
 # Entrypoints configuration
 ################################################################
 
-# Entrypoints definition
-#
 [entryPoints]
   [entryPoints.web]
     address = ":80"
@@ -63,7 +61,7 @@
 
   defaultRule = "Host(`{{ normalize .Name }}.test`)"
   exposedByDefault = false
-  network = "gateway"
+  network = "shared"
 
 ################################################################
 # Jaeger configuration
